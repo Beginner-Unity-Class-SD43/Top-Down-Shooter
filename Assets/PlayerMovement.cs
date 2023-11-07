@@ -13,10 +13,15 @@ public class PlayerMovement : MonoBehaviour {
 
     public GameObject gun; // Gun child object
 
+    Animator anim; // Animator component
+
+    bool facingRight = true; // Checks if player is facing right
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -28,6 +33,19 @@ public class PlayerMovement : MonoBehaviour {
 
         // Get Mouse position
         mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        // Animator
+        anim.SetFloat("mouseX", mousePos.x);
+        anim.SetFloat("mouseY", mousePos.y);
+
+        if(mousePos.x > transform.position.x && facingRight == false) // If the player is facing left
+        {
+            Flip();
+        } 
+        else if(mousePos.x < transform.position.x && facingRight == true) // If the player is facing right
+        {
+            Flip();
+        }
     }
 
     private void FixedUpdate()
@@ -37,5 +55,11 @@ public class PlayerMovement : MonoBehaviour {
         Vector2 lookDir = mousePos - rb.position;
         float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg;
         gun.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+    }
+
+    void Flip() // Flips the sprite
+    {
+        facingRight = !facingRight; // If facingRight = true, then set facingRight = false. If facingRight = false, then set facingRight = true.
+        transform.Rotate(0f, 180f, 0f);
     }
 }

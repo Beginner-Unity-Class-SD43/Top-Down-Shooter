@@ -11,11 +11,16 @@ public class Enemy : MonoBehaviour {
 
     PlayerMovement player; // The player
 
+    Animator anim; // The animator
+
+    bool facingRight = false; // Check if the slime is facing right
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         player = FindObjectOfType<PlayerMovement>();
+        anim = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -23,6 +28,19 @@ public class Enemy : MonoBehaviour {
     {
         directionToPlayer = (player.transform.position - transform.position);
         directionToPlayer.Normalize(); // Set vectors to 1
+
+        anim.SetFloat("dirX", directionToPlayer.x);
+        anim.SetFloat("dirY", directionToPlayer.y);
+
+        // Flip the sprite
+        if(directionToPlayer.x >= 0 && facingRight == false)
+        {
+            Flip();
+        }
+        else if(directionToPlayer.x < 0 && facingRight == true)
+        {
+            Flip();
+        }
     }
 
     private void FixedUpdate()
@@ -36,5 +54,11 @@ public class Enemy : MonoBehaviour {
         {
             Destroy(gameObject);
         }
+    }
+
+    void Flip()
+    {
+        facingRight = !facingRight;
+        transform.Rotate(0f, 180f, 0f);
     }
 }
