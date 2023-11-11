@@ -42,10 +42,11 @@ public class PlayerMovement : MonoBehaviour {
         {
             Flip();
         } 
-        else if(mousePos.x < transform.position.x && facingRight == true) // If the player is facing right
+        else if(mousePos.x < transform.position.x && facingRight == true)
         {
             Flip();
         }
+        
     }
 
     private void FixedUpdate()

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour {
     public float moveSpeed = 2; // Movement speed
@@ -15,9 +16,19 @@ public class Enemy : MonoBehaviour {
 
     bool facingRight = false; // Check if the slime is facing right
 
+    public float damage = 5f; // Enemy damage
+
+    public Image healthBar;
+
+    public float maxHealth = 20;
+    public float health;
+
+    public GameObject deathEffect;
+
     // Start is called before the first frame update
     void Start()
     {
+        health = maxHealth;
         rb = GetComponent<Rigidbody2D>();
         player = FindObjectOfType<PlayerMovement>();
         anim = GetComponent<Animator>();
@@ -41,6 +52,13 @@ public class Enemy : MonoBehaviour {
         {
             Flip();
         }
+
+        if(health <= 0)
+        {
+            GameObject effect = Instantiate(deathEffect, transform.position, Quaternion.identity);
+            Destroy(effect, 0.33f);
+            Destroy(gameObject);
+        }
     }
 
     private void FixedUpdate()
@@ -52,13 +70,20 @@ public class Enemy : MonoBehaviour {
     {
         if (collision.gameObject.CompareTag("Bullet"))
         {
-            Destroy(gameObject);
+            Bullet bullet = collision.gameObject.GetComponent<Bullet>();
+
+            TakeDamage(bullet.damage);
         }
     }
-
-    void Flip()
+    void Flip() // Flips the sprite
     {
-        facingRight = !facingRight;
+        facingRight = !facingRight; // If facingRight = true, then set facingRight = false. If facingRight = false, then set facingRight = true.
         transform.Rotate(0f, 180f, 0f);
+    }
+
+    void TakeDamage(float damage)
+    {
+        health -= damage;
+        healthBar.fillAmount = health / maxHealth;
     }
 }
